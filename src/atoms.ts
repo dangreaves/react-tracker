@@ -3,6 +3,8 @@ import { atomEffect } from "jotai-effect";
 
 import type { RudderAnalytics } from "@rudderstack/analytics-js";
 
+import { debug } from "./debug";
+
 import type { Event } from "./types";
 
 export const trackerAtom = atom<RudderAnalytics | null>(null);
@@ -28,6 +30,16 @@ export const eventBufferEffect = atomEffect((get, set) => {
     if ("identify" === event.type) {
       tracker.identify(event.userId, event.traits);
     }
+
+    if ("page" === event.type) {
+      if (event.category) {
+        tracker.page(event.category, event.name, event.properties);
+      } else {
+        tracker.page(event.name, event.properties);
+      }
+    }
+
+    debug("Emitted event", event);
   }
 
   /**

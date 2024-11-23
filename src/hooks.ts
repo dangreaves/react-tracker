@@ -2,7 +2,7 @@ import { useAtom, useSetAtom } from "jotai";
 
 import { trackerAtom, emitEventAtom, eventBufferEffect } from "./atoms";
 
-import type { IdentifyEvent } from "./types";
+import type { IdentifyEvent, PageEvent } from "./types";
 
 export function useTracker() {
   useAtom(eventBufferEffect);
@@ -27,6 +27,24 @@ export function useIdentify() {
       type: "identify",
       userId,
       traits,
+    });
+  };
+}
+
+export function useTrackPage() {
+  const emitEvent = useEmitEvent();
+
+  return (
+    name: PageEvent["name"],
+    properties?: Pick<PageEvent, "category"> & PageEvent["properties"],
+  ) => {
+    const { category, ...rest } = properties ?? {};
+
+    emitEvent({
+      type: "page",
+      name,
+      category,
+      properties: rest,
     });
   };
 }

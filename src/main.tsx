@@ -3,7 +3,7 @@ import { createRoot } from "react-dom/client";
 
 import { RudderAnalytics } from "@rudderstack/analytics-js";
 
-import { useTracker, useIdentify, useSetTracker } from "./hooks";
+import { useTracker, useIdentify, useSetTracker, useTrackPage } from "./hooks";
 
 const rudderAnalytics = new RudderAnalytics();
 
@@ -11,11 +11,16 @@ function Tracker() {
   useTracker();
 
   const identify = useIdentify();
+  const trackPage = useTrackPage();
+
   const setTracker = useSetTracker();
 
   // Load tracker when session is loaded.
   useEffect(() => {
-    // Immediately call the identify method which will buffer an event.
+    // Despite being called first, this should be emitted after the identify.
+    trackPage("Homepage");
+
+    // This should always be called before setTracker.
     identify("123456", {
       name: "Bobby Smith",
     });
@@ -29,10 +34,6 @@ function Tracker() {
 
       rudderAnalytics.ready(() => {
         setTracker(rudderAnalytics);
-
-        identify("9876", {
-          name: "John Doe",
-        });
       });
     }, 1000);
   }, [identify, setTracker]);
@@ -49,8 +50,4 @@ function Component() {
   );
 }
 
-createRoot(document.getElementById("root")!).render(
-  <StrictMode>
-    <Component />
-  </StrictMode>,
-);
+createRoot(document.getElementById("root")!).render(<Component />);

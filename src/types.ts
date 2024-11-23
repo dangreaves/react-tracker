@@ -1,4 +1,4 @@
-import type { IdentifyTraits } from "@rudderstack/analytics-js";
+import type { IdentifyTraits, ApiObject } from "@rudderstack/analytics-js";
 
 export type IdentifyEvent = {
   type: "identify";
@@ -6,4 +6,11 @@ export type IdentifyEvent = {
   traits?: IdentifyTraits;
 };
 
-export type Event = IdentifyEvent;
+export type PageEvent = {
+  type: "page";
+  name: string;
+  category?: string;
+  properties?: ApiObject;
+};
+
+export type Event = IdentifyEvent | PageEvent;
