@@ -15,6 +15,8 @@ export const appendEventAtom = atom(null, (_get, set, event: Event) => {
   set(eventBufferAtom, (eventBuffer) => [...eventBuffer, event]);
 });
 
+const EVENT_RANK_ORDER: Event["type"][] = ["identify", "page"];
+
 export const eventBufferEffect = atomEffect((get, set) => {
   const tracker = get(trackerAtom);
   const eventBuffer = get(eventBufferAtom);
@@ -25,8 +27,18 @@ export const eventBufferEffect = atomEffect((get, set) => {
   // The buffer is empty, do nothing.
   if (0 === eventBuffer.length) return;
 
+  /**
+   * Sort events by rank.
+   * This ensures that identify, page and track events are sent in that order if they
+   * all appear in the buffer at the same time.
+   */
+  const sortedEvents = [...eventBuffer].sort(
+    (a, b) =>
+      EVENT_RANK_ORDER.indexOf(a.type) - EVENT_RANK_ORDER.indexOf(b.type),
+  );
+
   // Loop each event in the buffer, and send to tracker.
-  for (const event of eventBuffer) {
+  for (const event of sortedEvents) {
     if ("identify" === event.type) {
       tracker.identify(event.userId, event.traits);
     }
