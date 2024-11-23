@@ -1,9 +1,9 @@
 {
-  "name": "@storeforge/react-track",
+  "name": "@dangreaves/react-track",
   "version": "0.1.0",
   "description": "React hooks for sending events to RudderStack and Segment",
   "license": "MIT",
-  "repository": "storeforgedev/react-track",
+  "repository": "dangreaves/react-track",
   "type": "module",
   "files": [
     "dist"
