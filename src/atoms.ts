@@ -11,7 +11,7 @@ export const trackerAtom = atom<RudderAnalytics | null>(null);
 
 export const eventBufferAtom = atom<Event[]>([]);
 
-export const emitEventAtom = atom(null, (_get, set, event: Event) => {
+export const appendEventAtom = atom(null, (_get, set, event: Event) => {
   set(eventBufferAtom, (eventBuffer) => [...eventBuffer, event]);
 });
 
