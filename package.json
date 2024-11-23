@@ -1,0 +1,50 @@
+{
+  "name": "@storeforge/react-track",
+  "version": "0.1.0",
+  "description": "React hooks for sending events to RudderStack and Segment",
+  "license": "MIT",
+  "repository": "storeforgedev/react-track",
+  "type": "module",
+  "files": [
+    "dist"
+  ],
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "scripts": {
+    "dev": "vite",
+    "preview": "vite preview",
+    "test": "echo \"No tests\"",
+    "format": "prettier --write .",
+    "build": "tsc -b && vite build",
+    "prepublishOnly": "pnpm run build"
+  },
+  "dependencies": {
+    "@rudderstack/analytics-js": "^3.11.13",
+    "jotai": "^2.10.3",
+    "jotai-effect": "^1.0.3",
+    "react": "^18.3.1"
+  },
+  "devDependencies": {
+    "@types/node": "^22.9.3",
+    "@types/react": "^18.3.12",
+    "@types/react-dom": "^18.3.1",
+    "@vitejs/plugin-react-swc": "^3.7.1",
+    "globals": "^15.12.0",
+    "prettier": "^3.3.3",
+    "react-dom": "^18.3.1",
+    "typescript": "^5.7.2",
+    "vite": "^5.4.11",
+    "vite-plugin-dts": "^4.3.0",
+    "vite-plugin-externalize-deps": "^0.8.0"
+  },
+  "packageManager": "pnpm@9.12.3+sha512.cce0f9de9c5a7c95bef944169cc5dfe8741abfb145078c0d508b868056848a87c81e626246cb60967cbd7fd29a6c062ef73ff840d96b3c86c40ac92cf4a813ee",
+  "prettier": {}
+}
