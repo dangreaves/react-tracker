@@ -1,6 +1,8 @@
 import { atom } from "jotai";
 import { atomEffect } from "jotai-effect";
 
+import { nanoid } from "nanoid";
+
 import type { RudderAnalytics } from "@rudderstack/analytics-js";
 
 import { debug } from "./debug";
@@ -8,7 +10,7 @@ import { debug } from "./debug";
 import type { Event } from "./types";
 
 /**
- * The fully initialized tracker instance.
+ * A fully initialized Segment compatible tracker.
  */
 export const trackerAtom = atom<RudderAnalytics | null>(null);
 
@@ -23,16 +25,29 @@ export const initAtom = atom(
 );
 
 /**
- * Array of events emitted by the application.
+ * Array of events.
  */
 export const eventsAtom = atom<Event[]>([]);
 
 /**
- * Emit a new event from the application.
+ * Array of events in pending status.
  */
-export const emitEventAtom = atom(null, (_get, set, event: Event) => {
-  set(eventsAtom, (events) => [...events, event]);
-});
+export const pendingEventsAtom = atom((get) =>
+  get(eventsAtom).filter((event) => "pending" === event.status),
+);
+
+/**
+ * Append an event to the events array.
+ */
+export const appendEventAtom = atom(
+  null,
+  (_get, set, event: Omit<Event, "id" | "status">) => {
+    set(eventsAtom, (events) => [
+      ...events,
+      { ...event, id: nanoid(), status: "pending" },
+    ]);
+  },
+);
 
 /**
  * Order in which buffered events should be emitted to the tracker.
@@ -47,40 +62,62 @@ const EVENT_RANK_ORDER: Event["type"][] = [
 ];
 
 /**
- * Effect run each time the events array changes.
+ * Emit pending events to the tracker.
  */
-export const eventsEffect = atomEffect((get, set) => {
-  const events = get(eventsAtom);
+export const emitEventsEffect = atomEffect((get, set) => {
+  // Resolve the tracker.
   const tracker = get(trackerAtom);
+
+  // Create a copy of pending events (so we can sort them).
+  const pendingEvents = [...get(pendingEventsAtom)];
 
   // We do not have a tracker yet, do nothing.
   if (!tracker) return;
 
-  // The buffer is empty, do nothing.
-  if (0 === events.length) return;
+  // There are no pending events, do nothing.
+  if (0 === pendingEvents.length) return;
 
   /**
-   * Sort events by rank.
+   * Sort pending events by rank.
    * This ensures that identify, page and track events are sent in that order if they
    * all appear in the buffer at the same time.
    */
-  const sortedEvents = [...events].sort(
+  pendingEvents.sort(
     (a, b) =>
       EVENT_RANK_ORDER.indexOf(a.type) - EVENT_RANK_ORDER.indexOf(b.type),
   );
 
-  // Loop each event in the buffer, and send to tracker.
-  for (const event of sortedEvents) {
+  // Loop each pending and emit to tracker.
+  for (const event of pendingEvents) {
     // @ts-expect-error
     tracker[event.type](...event.args);
-
     debug("Emitted event", event);
   }
 
-  /**
-   * Clear the event buffer.
-   * @todo Test if this could potentially drop events added during effect execution? I suspect
-   * it should not as this effect is synchronous?
-   */
-  set(eventsAtom, []);
+  // Resolve a list of emitted event IDs.
+  const emittedEventIds = pendingEvents.map((event) => event.id);
+
+  // Update status for each of the events we just emitted.
+  set(eventsAtom, (events) =>
+    events.map((event) => {
+      if (emittedEventIds.includes(event.id)) {
+        return { ...event, status: "emitted" };
+      }
+
+      return event;
+    }),
+  );
+});
+
+/**
+ * Current state of the tracker for debugging.
+ */
+export const trackerStateAtom = atom((get) => {
+  const events = get(eventsAtom);
+  const tracker = get(trackerAtom);
+
+  return {
+    events,
+    isConnected: !!tracker,
+  };
 });
