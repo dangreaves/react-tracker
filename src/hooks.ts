@@ -1,50 +1,26 @@
 import { useAtom, useSetAtom } from "jotai";
+import type { RudderAnalytics } from "@rudderstack/analytics-js";
 
-import { trackerAtom, appendEventAtom, eventBufferEffect } from "./atoms";
-
-import type { IdentifyEvent, PageEvent } from "./types";
+import { initAtom, eventsEffect, emitEventAtom } from "./atoms";
 
 export function useTracker() {
-  useAtom(eventBufferEffect);
-}
+  useAtom(eventsEffect);
 
-export function useSetTracker() {
-  return useSetAtom(trackerAtom);
-}
+  const emitEvent = useSetAtom(emitEventAtom);
 
-export function useAppendEvent() {
-  return useSetAtom(appendEventAtom);
-}
-
-export function useIdentify() {
-  const appendEvent = useAppendEvent();
-
-  return (
-    userId: IdentifyEvent["userId"],
-    traits?: IdentifyEvent["traits"],
-  ) => {
-    appendEvent({
-      type: "identify",
-      userId,
-      traits,
-    });
-  };
-}
-
-export function useTrackPage() {
-  const appendEvent = useAppendEvent();
-
-  return (
-    name: PageEvent["name"],
-    properties?: Pick<PageEvent, "category"> & PageEvent["properties"],
-  ) => {
-    const { category, ...rest } = properties ?? {};
-
-    appendEvent({
-      type: "page",
-      name,
-      category,
-      properties: rest,
-    });
+  return {
+    init: useSetAtom(initAtom),
+    identify: ((...args) =>
+      emitEvent({ type: "identify", args })) as RudderAnalytics["identify"],
+    page: ((...args) =>
+      emitEvent({ type: "page", args })) as RudderAnalytics["page"],
+    track: ((...args) =>
+      emitEvent({ type: "track", args })) as RudderAnalytics["track"],
+    group: ((...args) =>
+      emitEvent({ type: "group", args })) as RudderAnalytics["group"],
+    alias: ((...args) =>
+      emitEvent({ type: "alias", args })) as RudderAnalytics["alias"],
+    reset: ((...args) =>
+      emitEvent({ type: "reset", args })) as RudderAnalytics["reset"],
   };
 }

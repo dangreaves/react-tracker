@@ -1,16 +1,7 @@
-import type { IdentifyTraits, ApiObject } from "@rudderstack/analytics-js";
-
-export type IdentifyEvent = {
-  type: "identify";
-  userId: string;
-  traits?: IdentifyTraits;
-};
-
-export type PageEvent = {
-  type: "page";
-  name: string;
-  category?: string;
-  properties?: ApiObject;
-};
-
-export type Event = IdentifyEvent | PageEvent;
+/**
+ * An event emitted by the application.
+ */
+export interface Event {
+  type: "identify" | "page" | "track" | "group" | "alias" | "reset";
+  args: unknown[];
+}

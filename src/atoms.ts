@@ -7,49 +7,72 @@ import { debug } from "./debug";
 
 import type { Event } from "./types";
 
+/**
+ * The fully initialized tracker instance.
+ */
 export const trackerAtom = atom<RudderAnalytics | null>(null);
 
-export const eventBufferAtom = atom<Event[]>([]);
+/**
+ * Initiate tracking with the given tracker.
+ */
+export const initAtom = atom(
+  null,
+  (_get, set, { tracker }: { tracker: RudderAnalytics | null }) => {
+    set(trackerAtom, tracker);
+  },
+);
 
-export const appendEventAtom = atom(null, (_get, set, event: Event) => {
-  set(eventBufferAtom, (eventBuffer) => [...eventBuffer, event]);
+/**
+ * Array of events emitted by the application.
+ */
+export const eventsAtom = atom<Event[]>([]);
+
+/**
+ * Emit a new event from the application.
+ */
+export const emitEventAtom = atom(null, (_get, set, event: Event) => {
+  set(eventsAtom, (events) => [...events, event]);
 });
 
-const EVENT_RANK_ORDER: Event["type"][] = ["identify", "page"];
+/**
+ * Order in which buffered events should be emitted to the tracker.
+ */
+const EVENT_RANK_ORDER: Event["type"][] = [
+  "identify",
+  "page",
+  "track",
+  "group",
+  "alias",
+  "reset",
+];
 
-export const eventBufferEffect = atomEffect((get, set) => {
+/**
+ * Effect run each time the events array changes.
+ */
+export const eventsEffect = atomEffect((get, set) => {
+  const events = get(eventsAtom);
   const tracker = get(trackerAtom);
-  const eventBuffer = get(eventBufferAtom);
 
   // We do not have a tracker yet, do nothing.
   if (!tracker) return;
 
   // The buffer is empty, do nothing.
-  if (0 === eventBuffer.length) return;
+  if (0 === events.length) return;
 
   /**
    * Sort events by rank.
    * This ensures that identify, page and track events are sent in that order if they
    * all appear in the buffer at the same time.
    */
-  const sortedEvents = [...eventBuffer].sort(
+  const sortedEvents = [...events].sort(
     (a, b) =>
       EVENT_RANK_ORDER.indexOf(a.type) - EVENT_RANK_ORDER.indexOf(b.type),
   );
 
   // Loop each event in the buffer, and send to tracker.
   for (const event of sortedEvents) {
-    if ("identify" === event.type) {
-      tracker.identify(event.userId, event.traits);
-    }
-
-    if ("page" === event.type) {
-      if (event.category) {
-        tracker.page(event.category, event.name, event.properties);
-      } else {
-        tracker.page(event.name, event.properties);
-      }
-    }
+    // @ts-expect-error
+    tracker[event.type](...event.args);
 
     debug("Emitted event", event);
   }
@@ -59,5 +82,5 @@ export const eventBufferEffect = atomEffect((get, set) => {
    * @todo Test if this could potentially drop events added during effect execution? I suspect
    * it should not as this effect is synchronous?
    */
-  set(eventBufferAtom, []);
+  set(eventsAtom, []);
 });
