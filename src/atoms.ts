@@ -3,23 +3,21 @@ import { atomEffect } from "jotai-effect";
 
 import { nanoid } from "nanoid";
 
-import type { RudderAnalytics } from "@rudderstack/analytics-js";
-
 import { debug } from "./debug";
 
-import type { Event } from "./types";
+import type { Tracker, Event } from "./types";
 
 /**
  * A fully initialized Segment compatible tracker.
  */
-export const trackerAtom = atom<RudderAnalytics | null>(null);
+export const trackerAtom = atom<Tracker | null>(null);
 
 /**
  * Initiate tracking with the given tracker.
  */
 export const initAtom = atom(
   null,
-  (_get, set, { tracker }: { tracker: RudderAnalytics | null }) => {
+  (_get, set, { tracker }: { tracker: Tracker | null }) => {
     set(trackerAtom, tracker);
   },
 );

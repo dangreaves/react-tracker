@@ -27,7 +27,6 @@
     "prepublishOnly": "pnpm run build"
   },
   "dependencies": {
-    "@rudderstack/analytics-js": "^3.11.13",
     "debug": "^4.3.7",
     "jotai": "^2.10.3",
     "jotai-effect": "^1.0.3",
@@ -35,6 +34,8 @@
     "react": "^18.3.1"
   },
   "devDependencies": {
+    "@rudderstack/analytics-js": "^3.11.13",
+    "@segment/analytics-next": "^1.76.0",
     "@types/debug": "^4.1.12",
     "@types/node": "^22.9.3",
     "@types/react": "^18.3.12",
@@ -47,6 +48,10 @@
     "vite": "^5.4.11",
     "vite-plugin-dts": "^4.3.0",
     "vite-plugin-externalize-deps": "^0.8.0"
+  },
+  "optionalDependencies": {
+    "@rudderstack/analytics-js": "3",
+    "@segment/analytics-next": "1"
   },
   "packageManager": "pnpm@9.12.3+sha512.cce0f9de9c5a7c95bef944169cc5dfe8741abfb145078c0d508b868056848a87c81e626246cb60967cbd7fd29a6c062ef73ff840d96b3c86c40ac92cf4a813ee",
   "prettier": {}

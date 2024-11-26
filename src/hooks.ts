@@ -1,5 +1,6 @@
 import { useAtom, useSetAtom, useAtomValue } from "jotai";
-import type { RudderAnalytics } from "@rudderstack/analytics-js";
+
+import type { Tracker } from "./types";
 
 import {
   initAtom,
@@ -19,17 +20,16 @@ export function useTracker() {
       appendEvent({
         type: "identify",
         args,
-      })) as RudderAnalytics["identify"],
-    page: ((...args) =>
-      appendEvent({ type: "page", args })) as RudderAnalytics["page"],
+      })) as Tracker["identify"],
+    page: ((...args) => appendEvent({ type: "page", args })) as Tracker["page"],
     track: ((...args) =>
-      appendEvent({ type: "track", args })) as RudderAnalytics["track"],
+      appendEvent({ type: "track", args })) as Tracker["track"],
     group: ((...args) =>
-      appendEvent({ type: "group", args })) as RudderAnalytics["group"],
+      appendEvent({ type: "group", args })) as Tracker["group"],
     alias: ((...args) =>
-      appendEvent({ type: "alias", args })) as RudderAnalytics["alias"],
+      appendEvent({ type: "alias", args })) as Tracker["alias"],
     reset: ((...args) =>
-      appendEvent({ type: "reset", args })) as RudderAnalytics["reset"],
+      appendEvent({ type: "reset", args })) as Tracker["reset"],
   };
 }
 
