@@ -30,8 +30,10 @@
     "debug": "^4.3.7",
     "jotai": "^2.10.3",
     "jotai-effect": "^1.0.3",
-    "nanoid": "^5.0.8",
-    "react": "^18.3.1"
+    "nanoid": "^5.0.8"
+  },
+  "peerDependencies": {
+    "react": ">=18"
   },
   "devDependencies": {
     "@rudderstack/analytics-js": "^3.11.13",
@@ -43,6 +45,7 @@
     "@vitejs/plugin-react-swc": "^3.7.1",
     "globals": "^15.12.0",
     "prettier": "^3.3.3",
+    "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "typescript": "^5.7.2",
     "vite": "^5.4.11",
@@ -50,8 +53,8 @@
     "vite-plugin-externalize-deps": "^0.8.0"
   },
   "optionalDependencies": {
-    "@rudderstack/analytics-js": "3",
-    "@segment/analytics-next": "1"
+    "@rudderstack/analytics-js": "^3",
+    "@segment/analytics-next": "^1"
   },
   "packageManager": "pnpm@9.12.3+sha512.cce0f9de9c5a7c95bef944169cc5dfe8741abfb145078c0d508b868056848a87c81e626246cb60967cbd7fd29a6c062ef73ff840d96b3c86c40ac92cf4a813ee",
   "prettier": {}
