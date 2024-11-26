@@ -1,9 +1,8 @@
 import { atom } from "jotai";
 import { atomEffect } from "jotai-effect";
 
-import { nanoid } from "nanoid";
-
 import { debug } from "./debug";
+import { generateNonSecureUniqueId } from "./utils";
 
 import type { AnyTracker, Tracker, Event } from "./types";
 
@@ -42,7 +41,7 @@ export const appendEventAtom = atom(
   (_get, set, event: Omit<Event, "id" | "status">) => {
     set(eventsAtom, (events) => [
       ...events,
-      { ...event, id: nanoid(), status: "pending" },
+      { ...event, id: generateNonSecureUniqueId(), status: "pending" },
     ]);
   },
 );

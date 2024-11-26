@@ -29,8 +29,7 @@
   "dependencies": {
     "debug": "^4.3.7",
     "jotai": "^2.10.3",
-    "jotai-effect": "^1.0.3",
-    "nanoid": "^5.0.8"
+    "jotai-effect": "^1.0.3"
   },
   "peerDependencies": {
     "react": ">=18"
