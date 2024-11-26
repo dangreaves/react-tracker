@@ -1,7 +1,17 @@
+import type { AnalyticsBrowser } from "@segment/analytics-next";
 import type { RudderAnalytics } from "@rudderstack/analytics-js";
 
 /**
  * Supported Segment-compatible trackers.
+ */
+export type AnyTracker = RudderAnalytics | AnalyticsBrowser;
+
+/**
+ * Tracker type used internally.
+ *
+ * We use RudderAnalytics here because the types are cleaner, but in reality
+ * an AnalyticsBrowser from Segment would work just fine, as it has the
+ * same API for the track methods.
  */
 export type Tracker = RudderAnalytics;
 

@@ -5,7 +5,7 @@ import { nanoid } from "nanoid";
 
 import { debug } from "./debug";
 
-import type { Tracker, Event } from "./types";
+import type { AnyTracker, Tracker, Event } from "./types";
 
 /**
  * A fully initialized Segment compatible tracker.
@@ -17,8 +17,8 @@ export const trackerAtom = atom<Tracker | null>(null);
  */
 export const initAtom = atom(
   null,
-  (_get, set, { tracker }: { tracker: Tracker | null }) => {
-    set(trackerAtom, tracker);
+  (_get, set, { tracker }: { tracker: AnyTracker | null }) => {
+    set(trackerAtom, tracker as Tracker);
   },
 );
 
