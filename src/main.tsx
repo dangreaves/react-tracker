@@ -3,7 +3,7 @@ import { createRoot } from "react-dom/client";
 
 import { RudderAnalytics } from "@rudderstack/analytics-js";
 
-import { useTracker, useTrackerState } from "./hooks";
+import { useTracker, useTrackerState, TrackerDebugger } from "./index";
 
 const rudderAnalytics = new RudderAnalytics();
 
@@ -51,6 +51,7 @@ function Component() {
 
   return (
     <>
+      <TrackerDebugger />
       <h1>Actions</h1>
       <div style={{ display: "flex", gap: "15px" }}>
         <button onClick={() => tracker.identify("123456")}>Identify</button>
