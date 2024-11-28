@@ -38,7 +38,7 @@ export const appendEventAtom = atom(
   null,
   (_get, set, event: Omit<Event, "id" | "receivedAt">) => {
     set(eventsAtom, (events) => [
-      ...events,
+      ...events.slice(-49), // Only keep 50 events.
       { ...event, id: generateNonSecureUniqueId(), receivedAt: new Date() },
     ]);
   },
@@ -114,6 +114,8 @@ function computeEventHash(event: Event) {
 
 /**
  * Return events with information useful for debugging.
+ *
+ * @todo Improve isDuplicate efficiency.
  */
 export const debugEventsAtom = atom((get) => {
   const events = get(eventsAtom);
