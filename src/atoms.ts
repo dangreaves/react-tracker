@@ -27,7 +27,7 @@ export const eventsAtom = atom<Event[]>([]);
  * Array of events in pending status.
  */
 export const pendingEventsAtom = atom((get) =>
-  get(eventsAtom).filter((event) => "pending" === event.status),
+  get(eventsAtom).filter((event) => true !== event.isEmitted),
 );
 
 /**
@@ -95,7 +95,7 @@ export const emitEventsEffect = atomEffect((get, set) => {
   set(eventsAtom, (events) =>
     events.map((event) => {
       if (emittedEventIds.includes(event.id)) {
-        return { ...event, status: "emitted" };
+        return { ...event, isEmitted: true };
       }
 
       return event;

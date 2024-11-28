@@ -36,7 +36,7 @@ function Debugger() {
         <ol>
           {events.map((event) => (
             <li key={event.id}>
-              {event.type}: {event.status}
+              {event.type}: {event.isEmitted ? "Emitted" : "Pending"}
             </li>
           ))}
         </ol>
