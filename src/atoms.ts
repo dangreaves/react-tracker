@@ -125,26 +125,28 @@ export const debugEventsAtom = atom((get) => {
     hash: computeEventHash(event),
   }));
 
-  return hashedEvents.map(({ hash, ...event }, index): DebugEvent => {
-    // Get events which were received less than 3 seconds before this one.
-    const recentEvents = hashedEvents
-      .slice(0, index) // Only filter on events before this one.
-      .filter(
-        ({ receivedAt }) =>
-          3 > differenceInSeconds(event.receivedAt, receivedAt),
+  return hashedEvents
+    .map(({ hash, ...event }, index): DebugEvent => {
+      // Get events which were received less than 3 seconds before this one.
+      const recentEvents = hashedEvents
+        .slice(0, index) // Only filter on events before this one.
+        .filter(
+          ({ receivedAt }) =>
+            3 > differenceInSeconds(event.receivedAt, receivedAt),
+        );
+
+      // Check if any recent events have the same hash as this one.
+      const duplicateEvents = recentEvents.filter(
+        (recentEvent) => recentEvent.hash === hash,
       );
 
-    // Check if any recent events have the same hash as this one.
-    const duplicateEvents = recentEvents.filter(
-      (recentEvent) => recentEvent.hash === hash,
-    );
-
-    // Return debug event.
-    return {
-      ...event,
-      ...(0 < duplicateEvents.length ? { isDuplicate: true } : {}),
-    };
-  });
+      // Return debug event.
+      return {
+        ...event,
+        ...(0 < duplicateEvents.length ? { isDuplicate: true } : {}),
+      };
+    })
+    .reverse();
 });
 
 /**
