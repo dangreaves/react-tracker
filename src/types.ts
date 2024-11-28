@@ -32,5 +32,13 @@ export interface Event {
   id: string;
   type: "identify" | "page" | "track" | "group" | "alias" | "reset";
   args: unknown[];
+  receivedAt: Date;
   isEmitted?: boolean;
+}
+
+/**
+ * Event decorated with information useful for debugging.
+ */
+export interface DebugEvent extends Event {
+  isDuplicate?: boolean;
 }

@@ -37,6 +37,7 @@ function Debugger() {
           {events.map((event) => (
             <li key={event.id}>
               {event.type}: {event.isEmitted ? "Emitted" : "Pending"}
+              {event.isDuplicate && "Duplicate!"}
             </li>
           ))}
         </ol>

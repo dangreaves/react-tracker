@@ -27,6 +27,7 @@
     "prepublishOnly": "pnpm run build"
   },
   "dependencies": {
+    "date-fns": "^4.1.0",
     "debug": "^4.3.7",
     "jotai": "^2.10.3",
     "jotai-effect": "^1.0.3"

@@ -1,10 +1,11 @@
 import { atom } from "jotai";
 import { atomEffect } from "jotai-effect";
+import { differenceInSeconds } from "date-fns";
 
 import { debug } from "./debug";
 import { generateNonSecureUniqueId } from "./utils";
 
-import type { Tracker, Event, InitConfig } from "./types";
+import type { Tracker, Event, DebugEvent, InitConfig } from "./types";
 
 /**
  * A fully initialized Segment compatible tracker.
@@ -24,7 +25,7 @@ export const initAtom = atom(null, (_get, set, { tracker }: InitConfig) => {
 export const eventsAtom = atom<Event[]>([]);
 
 /**
- * Array of events in pending status.
+ * Array of events not yet emitted.
  */
 export const pendingEventsAtom = atom((get) =>
   get(eventsAtom).filter((event) => true !== event.isEmitted),
@@ -35,10 +36,10 @@ export const pendingEventsAtom = atom((get) =>
  */
 export const appendEventAtom = atom(
   null,
-  (_get, set, event: Omit<Event, "id" | "status">) => {
+  (_get, set, event: Omit<Event, "id" | "receivedAt">) => {
     set(eventsAtom, (events) => [
       ...events,
-      { ...event, id: generateNonSecureUniqueId(), status: "pending" },
+      { ...event, id: generateNonSecureUniqueId(), receivedAt: new Date() },
     ]);
   },
 );
@@ -81,7 +82,7 @@ export const emitEventsEffect = atomEffect((get, set) => {
       EVENT_RANK_ORDER.indexOf(a.type) - EVENT_RANK_ORDER.indexOf(b.type),
   );
 
-  // Loop each pending and emit to tracker.
+  // Loop each pending event and emit to tracker.
   for (const event of pendingEvents) {
     // @ts-expect-error
     tracker[event.type](...event.args);
@@ -91,7 +92,7 @@ export const emitEventsEffect = atomEffect((get, set) => {
   // Resolve a list of emitted event IDs.
   const emittedEventIds = pendingEvents.map((event) => event.id);
 
-  // Update status for each of the events we just emitted.
+  // Set isEmitted for each of the events we just emitted.
   set(eventsAtom, (events) =>
     events.map((event) => {
       if (emittedEventIds.includes(event.id)) {
@@ -104,10 +105,51 @@ export const emitEventsEffect = atomEffect((get, set) => {
 });
 
 /**
+ * Compute a hash for the given event.
+ */
+function computeEventHash(event: Event) {
+  const { type, args } = event;
+  return JSON.stringify({ type, args });
+}
+
+/**
+ * Return events with information useful for debugging.
+ */
+export const debugEventsAtom = atom((get) => {
+  const events = get(eventsAtom);
+
+  const hashedEvents = events.map((event) => ({
+    ...event,
+    hash: computeEventHash(event),
+  }));
+
+  return hashedEvents.map(({ hash, ...event }, index): DebugEvent => {
+    // Get events which were received less than 3 seconds before this one.
+    const recentEvents = hashedEvents
+      .slice(0, index) // Only filter on events before this one.
+      .filter(
+        ({ receivedAt }) =>
+          3 > differenceInSeconds(event.receivedAt, receivedAt),
+      );
+
+    // Check if any recent events have the same hash as this one.
+    const duplicateEvents = recentEvents.filter(
+      (recentEvent) => recentEvent.hash === hash,
+    );
+
+    // Return debug event.
+    return {
+      ...event,
+      ...(0 < duplicateEvents.length ? { isDuplicate: true } : {}),
+    };
+  });
+});
+
+/**
  * Current state of the tracker for debugging.
  */
 export const trackerStateAtom = atom((get) => {
-  const events = get(eventsAtom);
+  const events = get(debugEventsAtom);
   const tracker = get(trackerAtom);
 
   return {
