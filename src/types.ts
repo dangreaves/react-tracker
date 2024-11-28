@@ -16,6 +16,16 @@ export type AnyTracker = RudderAnalytics | AnalyticsBrowser;
 export type Tracker = RudderAnalytics;
 
 /**
+ * Configuration object provided when initiating the tracker.
+ */
+export interface InitConfig {
+  /**
+   * Any supported tracker.
+   */
+  tracker: AnyTracker | null;
+}
+
+/**
  * An event to be emitted to the tracker.
  */
 export interface Event {

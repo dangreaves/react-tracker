@@ -4,7 +4,7 @@ import { atomEffect } from "jotai-effect";
 import { debug } from "./debug";
 import { generateNonSecureUniqueId } from "./utils";
 
-import type { AnyTracker, Tracker, Event } from "./types";
+import type { Tracker, Event, InitConfig } from "./types";
 
 /**
  * A fully initialized Segment compatible tracker.
@@ -14,12 +14,9 @@ export const trackerAtom = atom<Tracker | null>(null);
 /**
  * Initiate tracking with the given tracker.
  */
-export const initAtom = atom(
-  null,
-  (_get, set, { tracker }: { tracker: AnyTracker | null }) => {
-    set(trackerAtom, tracker as Tracker);
-  },
-);
+export const initAtom = atom(null, (_get, set, { tracker }: InitConfig) => {
+  set(trackerAtom, tracker as Tracker);
+});
 
 /**
  * Array of events.
