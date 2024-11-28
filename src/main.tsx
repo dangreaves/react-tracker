@@ -12,7 +12,7 @@ function Tracker() {
 
   useEffect(() => {
     rudderAnalytics.load(
-      "2pC2jJwYFOmWr02caQkfRa3Vkvw",
+      "2pTOhWPvU6QdWwcE1v9QM8vAQqQ",
       "https://bareddanxhuwkw.dataplane.rudderstack.com",
     );
 
