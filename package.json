@@ -28,10 +28,12 @@
     "prepublishOnly": "pnpm run build"
   },
   "dependencies": {
+    "clsx": "^2.1.1",
     "date-fns": "^4.1.0",
     "debug": "^4.3.7",
     "jotai": "^2.10.3",
-    "jotai-effect": "^1.0.3"
+    "jotai-effect": "^1.0.3",
+    "react-draggable": "^4.4.6"
   },
   "peerDependencies": {
     "react": ">=18"

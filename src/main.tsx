@@ -24,34 +24,11 @@ function Tracker() {
   return null;
 }
 
-function Debugger() {
-  const { events, isConnected } = useTrackerState();
-
-  return (
-    <div>
-      <h1>Events</h1>
-      <p>Connection status: {isConnected ? "Connected" : "Disconnected"}</p>
-      {0 === events.length && <p>No events emitted yet.</p>}
-      {0 < events.length && (
-        <ol>
-          {events.map((event) => (
-            <li key={event.id}>
-              {event.type}: {event.isEmitted ? "Emitted" : "Pending"}
-              {event.isDuplicate && "Duplicate!"}
-            </li>
-          ))}
-        </ol>
-      )}
-    </div>
-  );
-}
-
 function Component() {
   const tracker = useTracker();
 
   return (
     <>
-      <TrackerDebugger />
       <h1>Actions</h1>
       <div style={{ display: "flex", gap: "15px" }}>
         <button onClick={() => tracker.identify("123456")}>Identify</button>
@@ -72,7 +49,7 @@ function Component() {
         </button>
       </div>
       <Tracker />
-      <Debugger />
+      <TrackerDebugger />
     </>
   );
 }
