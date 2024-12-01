@@ -1,9 +1,10 @@
 import { clsx } from "clsx";
 import { format } from "date-fns";
 import Draggable from "react-draggable";
-import { useRef, useEffect } from "react";
+import { useRef, useEffect, useState, useMemo } from "react";
 
 import { useTrackerState } from "./hooks";
+import type { DebugEvent } from "./types";
 
 import "./TrackerDebugger.css";
 
@@ -43,28 +44,54 @@ export function TrackerDebugger() {
             </div>
           </div>
           {0 < events.length && (
-            <ol className="tracker-debugger__events">
+            <div className="tracker-debugger__events">
               {events.map((event) => (
-                <li
-                  key={event.id}
-                  className={clsx(
-                    "tracker-debugger__event",
-                    event.isEmitted && "tracker-debugger__event--emitted",
-                  )}
-                >
-                  <span className="tracker-debugger__muted">{event.type}</span>
-                  {`${event.args[0]}`}
-                  <span className="tracker-debugger__muted">
-                    {format(event.receivedAt, "HH:mm:ss")}
-                  </span>
-                  {event.isDuplicate && <WarningIcon />}
-                </li>
+                <EventRow event={event} key={event.id} />
               ))}
-            </ol>
+            </div>
           )}
         </div>
       </div>
     </Draggable>
+  );
+}
+
+function EventRow({ event }: { event: DebugEvent }) {
+  const [isOpen, setIsOpen] = useState(false);
+
+  return (
+    <div className="tracker-debugger__event">
+      <button
+        onClick={() => setIsOpen((isOpen) => !isOpen)}
+        className={clsx(
+          "tracker-debugger__event-button",
+          event.isEmitted && "tracker-debugger__event-button--emitted",
+        )}
+      >
+        <span className="tracker-debugger__muted">{event.type}</span>
+        {`${event.args[0]}`}
+        <span className="tracker-debugger__muted">
+          {format(event.receivedAt, "HH:mm:ss")}
+        </span>
+        {event.isDuplicate && (
+          <span className="tracker-debugger__warning">
+            <WarningIcon />
+            Duplicate
+          </span>
+        )}
+      </button>
+      {isOpen && <EventRowJson event={event} />}
+    </div>
+  );
+}
+
+function EventRowJson({ event }: { event: DebugEvent }) {
+  const eventJson = useMemo(() => JSON.stringify(event, null, 2), [event]);
+
+  return (
+    <div className="tracker-debugger__event-json">
+      <pre>{eventJson}</pre>
+    </div>
   );
 }
 
@@ -87,11 +114,7 @@ function DragHandle() {
 
 function WarningIcon() {
   return (
-    <svg
-      viewBox="0 0 20 20"
-      fill="currentColor"
-      className="tracker-debugger__warning-icon"
-    >
+    <svg viewBox="0 0 20 20" fill="currentColor">
       <path d="M10 6a.75.75 0 0 1 .75.75v3.5a.75.75 0 0 1-1.5 0v-3.5a.75.75 0 0 1 .75-.75Z"></path>
       <path d="M11 13a1 1 0 1 1-2 0 1 1 0 0 1 2 0Z"></path>
       <path
