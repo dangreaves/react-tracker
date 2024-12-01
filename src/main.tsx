@@ -3,7 +3,7 @@ import { createRoot } from "react-dom/client";
 
 import { RudderAnalytics } from "@rudderstack/analytics-js";
 
-import { useTracker, useTrackerState, TrackerDebugger } from "./index";
+import { useTracker, TrackerHelper } from "./index";
 
 const rudderAnalytics = new RudderAnalytics();
 
@@ -49,7 +49,7 @@ function Component() {
         </button>
       </div>
       <Tracker />
-      <TrackerDebugger />
+      <TrackerHelper />
     </>
   );
 }
