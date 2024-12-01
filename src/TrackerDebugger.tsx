@@ -1,14 +1,22 @@
 import { clsx } from "clsx";
 import { format } from "date-fns";
 import Draggable from "react-draggable";
+import { useRef, useEffect } from "react";
 
 import { useTrackerState } from "./hooks";
-import type { DebugEvent } from "./types";
 
 import "./TrackerDebugger.css";
 
 export function TrackerDebugger() {
   const { events, isConnected } = useTrackerState();
+
+  const ref = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const contentNode = ref.current;
+    if (!contentNode) return;
+    contentNode.scrollTo({ top: contentNode.scrollHeight });
+  }, [events]);
 
   return (
     <Draggable handle=".tracker-debugger__drag-handle">
@@ -17,7 +25,7 @@ export function TrackerDebugger() {
           <DragHandle />
           <span className="tracker-debugger__title">Tracker helper</span>
         </div>
-        <div className="tracker-debugger__content">
+        <div className="tracker-debugger__content" ref={ref}>
           <div className="tracker-debugger__connection">
             <span className="tracker-debugger__title">RudderStack</span>
             {isConnected ? (
@@ -87,7 +95,7 @@ function WarningIcon() {
       <path d="M10 6a.75.75 0 0 1 .75.75v3.5a.75.75 0 0 1-1.5 0v-3.5a.75.75 0 0 1 .75-.75Z"></path>
       <path d="M11 13a1 1 0 1 1-2 0 1 1 0 0 1 2 0Z"></path>
       <path
-        fill-rule="evenodd"
+        fillRule="evenodd"
         d="M17 10a7 7 0 1 1-14 0 7 7 0 0 1 14 0Zm-1.5 0a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0Z"
       ></path>
     </svg>
