@@ -45,6 +45,13 @@ export const appendEventAtom = atom(
 );
 
 /**
+ * Clear the events array.
+ */
+export const clearEventsAtom = atom(null, (_get, set) => {
+  set(eventsAtom, []);
+});
+
+/**
  * Order in which buffered events should be emitted to the tracker.
  */
 const EVENT_RANK_ORDER: Event["type"][] = [
@@ -151,8 +158,8 @@ export const debugEventsAtom = atom((get) => {
  * Current state of the tracker for debugging.
  */
 export const trackerStateAtom = atom((get) => {
-  const events = get(debugEventsAtom);
   const tracker = get(trackerAtom);
+  const events = get(debugEventsAtom);
 
   return {
     events,

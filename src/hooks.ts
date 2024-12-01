@@ -5,6 +5,7 @@ import type { Tracker } from "./types";
 
 import {
   initAtom,
+  clearEventsAtom,
   appendEventAtom,
   emitEventsEffect,
   trackerStateAtom,
@@ -40,5 +41,11 @@ export function useTracker() {
 }
 
 export function useTrackerState() {
-  return useAtomValue(trackerStateAtom);
+  const clearEvents = useSetAtom(clearEventsAtom);
+  const trackerState = useAtomValue(trackerStateAtom);
+
+  return {
+    ...trackerState,
+    clearEvents,
+  };
 }

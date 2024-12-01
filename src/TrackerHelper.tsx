@@ -9,7 +9,7 @@ import type { DebugEvent } from "./types";
 import "./TrackerHelper.css";
 
 export function TrackerHelper() {
-  const { events, isConnected } = useTrackerState();
+  const { events, isConnected, clearEvents } = useTrackerState();
 
   const ref = useRef<HTMLDivElement>(null);
 
@@ -38,10 +38,15 @@ export function TrackerHelper() {
             )}
           </div>
           <div className="tracker-helper__summary">
-            <span className="tracker-helper__title">Events received</span>
-            <div className="tracker-helper__badge tracker-helper__badge--no-dot">
-              {events.length}
+            <div>
+              <span className="tracker-helper__title">Events received</span>
+              <div className="tracker-helper__badge tracker-helper__badge--no-dot">
+                {events.length}
+              </div>
             </div>
+            {0 < events.length && (
+              <button onClick={() => clearEvents()}>Clear events</button>
+            )}
           </div>
           {0 < events.length && (
             <div className="tracker-helper__events">

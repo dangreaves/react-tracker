@@ -8,6 +8,7 @@
   --tracker-helper-green-700: #15803d;
   --tracker-helper-green-800: #166534;
   --tracker-helper-red-700: #b91c1c;
+  --tracker-helper-blue-700: #1d4ed8;
   --tracker-helper-border-radius-lg: 0.5rem;
   --tracker-helper-font-weight-semibold: 600;
   --tracker-helper-font-size-sm: 0.875rem;
@@ -80,8 +81,24 @@
 
 .tracker-helper__summary {
   display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.tracker-helper__summary > div {
+  display: flex;
   gap: 10px;
   align-items: center;
+}
+
+.tracker-helper__summary > button {
+  all: unset;
+  cursor: pointer;
+  color: var(--tracker-helper-blue-700);
+}
+
+.tracker-helper__summary > button:hover {
+  text-decoration: underline;
 }
 
 .tracker-helper__badge {
