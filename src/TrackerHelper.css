@@ -53,14 +53,27 @@
   align-items: center;
 }
 
-.tracker-helper__title {
-  font-weight: var(--tracker-helper-font-weight-semibold);
-}
-
 .tracker-helper__drag-handle {
   width: 20px;
   cursor: grab;
+  display: block;
   color: var(--tracker-helper-zinc-500);
+}
+
+.tracker-helper__title {
+  flex: 1;
+  font-weight: var(--tracker-helper-font-weight-semibold);
+}
+
+.tracker-helper__close-btn {
+  all: unset;
+  cursor: pointer;
+  color: var(--tracker-helper-zinc-500);
+}
+
+.tracker-helper__close-btn svg {
+  width: 20px;
+  display: block;
 }
 
 .tracker-helper__content {

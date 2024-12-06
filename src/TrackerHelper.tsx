@@ -1,14 +1,42 @@
 import { clsx } from "clsx";
+import { useAtom } from "jotai";
 import { format } from "date-fns";
 import Draggable from "react-draggable";
 import { useRef, useEffect, useState, useMemo } from "react";
 
 import { useTrackerState } from "./hooks";
+import { helperEnabledAtom } from "./atoms";
+
 import type { DebugEvent } from "./types";
 
 import "./TrackerHelper.css";
 
-export function TrackerHelper() {
+export function TrackerHelper({
+  enabled,
+  onClose,
+}: { enabled?: boolean; onClose?: () => void } = {}) {
+  const [helperEnabled, setHelperEnabled] = useAtom(helperEnabledAtom);
+
+  /**
+   * Enable the helper when ?enableTrackerHelper appended to URL.
+   * Unless the helper is being manually managed using the enabled prop.
+   */
+  useEffect(() => {
+    const url = new URL(window.location.href);
+    if (url.searchParams.has("enableTrackerHelper")) setHelperEnabled(true);
+  }, [enabled, setHelperEnabled]);
+
+  function _onClose() {
+    if (onClose) onClose();
+    setHelperEnabled(false);
+  }
+
+  const _enabled = "undefined" !== typeof enabled ? enabled : helperEnabled;
+
+  return _enabled ? <TrackerHelperInner onClose={_onClose} /> : null;
+}
+
+export function TrackerHelperInner({ onClose }: { onClose: () => void }) {
   const { events, isConnected, clearEvents } = useTrackerState();
 
   const ref = useRef<HTMLDivElement>(null);
@@ -25,6 +53,7 @@ export function TrackerHelper() {
         <div className="tracker-helper__header">
           <DragHandle />
           <span className="tracker-helper__title">Tracker helper</span>
+          <CloseButton onClose={onClose} />
         </div>
         <div className="tracker-helper__content" ref={ref}>
           <div className="tracker-helper__connection">
@@ -114,6 +143,16 @@ function DragHandle() {
       <path d="M11 9.75c0-.552.448-1 1-1h.5c.552 0 1 .448 1 1v.5c0 .552-.448 1-1 1h-.5c-.552 0-1-.448-1-1v-.5Z"></path>
       <path d="M12 13c-.552 0-1 .448-1 1v.5c0 .552.448 1 1 1h.5c.552 0 1-.448 1-1v-.5c0-.552-.448-1-1-1h-.5Z"></path>
     </svg>
+  );
+}
+
+function CloseButton({ onClose }: { onClose: () => void }) {
+  return (
+    <button className="tracker-helper__close-btn" onClick={() => onClose()}>
+      <svg viewBox="0 0 20 20" fill="currentColor">
+        <path d="M13.97 15.03a.75.75 0 1 0 1.06-1.06l-3.97-3.97 3.97-3.97a.75.75 0 0 0-1.06-1.06l-3.97 3.97-3.97-3.97a.75.75 0 0 0-1.06 1.06l3.97 3.97-3.97 3.97a.75.75 0 1 0 1.06 1.06l3.97-3.97 3.97 3.97Z"></path>
+      </svg>
+    </button>
   );
 }
 

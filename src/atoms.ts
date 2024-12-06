@@ -1,5 +1,7 @@
 import { atom } from "jotai";
 import { atomEffect } from "jotai-effect";
+import { atomWithStorage } from "jotai/utils";
+
 import { differenceInSeconds } from "date-fns";
 
 import { debug } from "./debug";
@@ -153,6 +155,16 @@ export const debugEventsAtom = atom((get) => {
     };
   });
 });
+
+/**
+ * Should the tracker helper be rendered?
+ */
+export const helperEnabledAtom = atomWithStorage(
+  "react-tracker-helper-enabled",
+  false,
+  undefined,
+  { getOnInit: true },
+);
 
 /**
  * Current state of the tracker for debugging.
