@@ -19,6 +19,7 @@
   position: fixed;
   top: 50px;
   right: 50px;
+  z-index: 500;
   width: 100%;
   max-width: 400px;
   background: var(--tracker-helper-white);
