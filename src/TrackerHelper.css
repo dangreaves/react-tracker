@@ -201,7 +201,8 @@
 }
 
 .tracker-helper__event-args {
-  word-break: break-all;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .tracker-helper__event-time {
