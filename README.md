@@ -1,3 +1,5 @@
+# react-tracker
+
 > React hooks for sending events to RudderStack and Segment
 
 [![NPM Version](https://img.shields.io/npm/v/%40dangreaves%2Freact-tracker)](https://npmjs.com/@dangreaves/react-tracker)
@@ -8,4 +10,10 @@ This package exports a set of React hooks which make loading and emitting events
 
 It also exports a `<TrackerHelper />` component which renders a floating debug window, similar to the [Shopify Pixel Helper](https://help.shopify.com/en/manual/promoting-marketing/pixels/custom-pixels/testing#shopify-pixel-helper), showing an expandable list of tracking events as they are emitted.
 
-![Screenshot of tracker helper component](./docs/tracker_helper_screenshot.png)
+<img src="./docs/tracker_helper_screenshot.png" width="420" />
+
+## Installation
+
+```sh
+npm install @dangreaves/react-tracker
+```
