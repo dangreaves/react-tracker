@@ -186,6 +186,7 @@
   display: block;
   width: 6px;
   height: 6px;
+  flex-shrink: 0;
   border: 1px solid var(--tracker-helper-zinc-500);
 }
 
@@ -194,13 +195,24 @@
   border-color: var(--tracker-helper-green-700);
 }
 
-.tracker-helper__muted {
+.tracker-helper__event-type {
+  flex-shrink: 0;
+  color: var(--tracker-helper-zinc-500);
+}
+
+.tracker-helper__event-args {
+  word-break: break-all;
+}
+
+.tracker-helper__event-time {
+  flex-shrink: 0;
   color: var(--tracker-helper-zinc-500);
 }
 
 .tracker-helper__warning {
   display: flex;
   gap: 2px;
+  flex-shrink: 0;
   align-items: center;
   color: var(--tracker-helper-red-700);
   font-size: var(--tracker-helper-font-size-xs);

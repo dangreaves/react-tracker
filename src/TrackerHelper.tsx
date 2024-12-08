@@ -102,9 +102,9 @@ function EventRow({ event }: { event: DebugEvent }) {
           event.isEmitted && "tracker-helper__event-button--emitted",
         )}
       >
-        <span className="tracker-helper__muted">{event.type}</span>
-        {`${event.args[0]}`}
-        <span className="tracker-helper__muted">
+        <span className="tracker-helper__event-type">{event.type}</span>
+        <span className="tracker-helper__event-args">{`${event.args[0]}`}</span>
+        <span className="tracker-helper__event-time">
           {format(event.receivedAt, "HH:mm:ss")}
         </span>
         {event.isDuplicate && (
