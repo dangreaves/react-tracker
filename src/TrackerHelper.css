@@ -213,12 +213,13 @@
 }
 
 .tracker-helper__event-json {
-  padding: 0 10px;
+  padding: 10px;
   border-radius: 6px;
   border: 1px solid var(--tracker-helper-zinc-300);
 }
 
 .tracker-helper__event-json pre {
+  margin: 0;
   width: 100%;
   overflow: scroll;
   font-family: monospace;
