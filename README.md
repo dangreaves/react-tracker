@@ -27,10 +27,7 @@ Create a React component which imports your chosen adapter, and pass it to the `
 In this example, we are using the [RudderStack JavaScript SDK](https://www.rudderstack.com/docs/sources/event-streams/sdks/rudderstack-javascript-sdk).
 
 ```tsx
-import { useTracker } from "@dangreaves/react-tracker";
-import { RudderAnalytics } from "@rudderstack/analytics-js";
-
-const rudderAnalytics = new RudderAnalytics();
+import { useTracker, RudderStackAdapter } from "@dangreaves/react-tracker";
 
 function Tracker() {
   const tracker = useTracker();
