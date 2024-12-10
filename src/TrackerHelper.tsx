@@ -120,7 +120,7 @@ function EventRow({ event }: { event: DebugEvent }) {
 }
 
 function EventRowJson({ event }: { event: DebugEvent }) {
-  const eventJson = useMemo(() => JSON.stringify(event, null, 2), [event]);
+  const eventJson = useMemo(() => JSON.stringify(event.args, null, 2), [event]);
 
   return (
     <div className="tracker-helper__event-json">
