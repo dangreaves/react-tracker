@@ -1,24 +1,18 @@
 import { StrictMode, useEffect } from "react";
 import { createRoot } from "react-dom/client";
 
-import { RudderAnalytics } from "@rudderstack/analytics-js";
-
-import { useTracker, TrackerHelper } from "./index";
-
-const rudderAnalytics = new RudderAnalytics();
+import { useTracker, TrackerHelper, RudderStackAdapter } from "./index";
 
 function Tracker() {
   const tracker = useTracker();
 
   useEffect(() => {
-    rudderAnalytics.load(
-      "2pTOhWPvU6QdWwcE1v9QM8vAQqQ",
-      "https://bareddanxhuwkw.dataplane.rudderstack.com",
+    tracker.loadAdapter(
+      new RudderStackAdapter({
+        writeKey: "2pTOhWPvU6QdWwcE1v9QM8vAQqQ",
+        dataPlaneUrl: "https://bareddanxhuwkw.dataplane.rudderstack.com",
+      }),
     );
-
-    rudderAnalytics.ready(() => {
-      tracker.init({ tracker: rudderAnalytics });
-    });
   }, [tracker]);
 
   return null;

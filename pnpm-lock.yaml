@@ -8,9 +8,6 @@ importers:
 
   .:
     dependencies:
-      clsx:
-        specifier: ^2.1.1
-        version: 2.1.1
       date-fns:
         specifier: ^4.1.0
         version: 4.1.0
@@ -20,9 +17,6 @@ importers:
       jotai:
         specifier: ^2.10.3
         version: 2.10.3(@types/react@18.3.12)(react@18.3.1)
-      jotai-effect:
-        specifier: ^1.0.3
-        version: 1.0.3(jotai@2.10.3(@types/react@18.3.12)(react@18.3.1))
       react-draggable:
         specifier: ^4.4.6
         version: 4.4.6(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
@@ -576,10 +570,6 @@ packages:
     resolution: {integrity: sha512-EcR6r5a8bj6pu3ycsa/E/cKVGuTgZJZdsyUYHOksG/UHIiKfjxzRxYJpyVBwYaQeOvghal9fcc4PidlgzugAQg==}
     engines: {node: '>=6'}
 
-  clsx@2.1.1:
-    resolution: {integrity: sha512-eYm0QWBtUrBWZWG0d386OGAw16Z995PiOVo2B7bjWSbHedGl5e0ZWaq65kOGgUSNesEIDkB9ISbTg/JK9dhCZA==}
-    engines: {node: '>=6'}
-
   compare-versions@6.1.1:
     resolution: {integrity: sha512-4hm4VPpIecmlg59CHXnRDnqGplJFrbLG4aFEl5vl6cK1u76ws3LLvX7ikFnTDl5vo39sjWD6AaDPYodJp/NNHg==}
 
@@ -673,11 +663,6 @@ packages:
 
   jju@1.4.0:
     resolution: {integrity: sha512-8wb9Yw966OSxApiCt0K3yNJL8pnNeIv+OEq2YMidz4FKP6nonSRoOXc80iXY4JaN2FC11B9qsNmDsm+ZOfMROA==}
-
-  jotai-effect@1.0.3:
-    resolution: {integrity: sha512-Xye6oVMQkhOmkF9G5gdtwlqG2w9GuMcfYdRS0aV/HeoYCj1LfLJ4O8jQRVT/Zb5hPGOLGNll/x6k5wxifn1jYg==}
-    peerDependencies:
-      jotai: '>=2.5.0'
 
   jotai@2.10.3:
     resolution: {integrity: sha512-Nnf4IwrLhNfuz2JOQLI0V/AgwcpxvVy8Ec8PidIIDeRi4KCFpwTFIpHAAcU+yCgnw/oASYElq9UY0YdUUegsSA==}
@@ -1407,8 +1392,6 @@ snapshots:
 
   clsx@1.2.1: {}
 
-  clsx@2.1.1: {}
-
   compare-versions@6.1.1: {}
 
   computeds@0.0.1: {}
@@ -1495,10 +1478,6 @@ snapshots:
       hasown: 2.0.2
 
   jju@1.4.0: {}
-
-  jotai-effect@1.0.3(jotai@2.10.3(@types/react@18.3.12)(react@18.3.1)):
-    dependencies:
-      jotai: 2.10.3(@types/react@18.3.12)(react@18.3.1)
 
   jotai@2.10.3(@types/react@18.3.12)(react@18.3.1):
     optionalDependencies:

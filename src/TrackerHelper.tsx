@@ -1,4 +1,3 @@
-import { clsx } from "clsx";
 import { useAtom } from "jotai";
 import { format } from "date-fns";
 import Draggable from "react-draggable";
@@ -37,7 +36,7 @@ export function TrackerHelper({
 }
 
 export function TrackerHelperInner({ onClose }: { onClose: () => void }) {
-  const { events, isConnected, clearEvents } = useTrackerState();
+  const { events, adapters, clearEvents } = useTrackerState();
 
   const ref = useRef<HTMLDivElement>(null);
 
@@ -56,16 +55,18 @@ export function TrackerHelperInner({ onClose }: { onClose: () => void }) {
           <CloseButton onClose={onClose} />
         </div>
         <div className="tracker-helper__content" ref={ref}>
-          <div className="tracker-helper__connection">
-            <span className="tracker-helper__title">RudderStack</span>
-            {isConnected ? (
-              <div className="tracker-helper__badge tracker-helper__badge--success">
-                Connected
-              </div>
-            ) : (
-              <div className="tracker-helper__badge">Disconnected</div>
-            )}
-          </div>
+          {adapters.map((adapter) => (
+            <div className="tracker-helper__connection" key={adapter.name}>
+              <span className="tracker-helper__title">{adapter.name}</span>
+              {adapter.isConnected ? (
+                <div className="tracker-helper__badge tracker-helper__badge--success">
+                  Connected
+                </div>
+              ) : (
+                <div className="tracker-helper__badge">Disconnected</div>
+              )}
+            </div>
+          ))}
           <div className="tracker-helper__summary">
             <div>
               <span className="tracker-helper__title">Events received</span>
@@ -97,10 +98,7 @@ function EventRow({ event }: { event: DebugEvent }) {
     <div className="tracker-helper__event">
       <button
         onClick={() => setIsOpen((isOpen) => !isOpen)}
-        className={clsx(
-          "tracker-helper__event-button",
-          event.isEmitted && "tracker-helper__event-button--emitted",
-        )}
+        className="tracker-helper__event-button tracker-helper__event-button--emitted"
       >
         <span className="tracker-helper__event-type">{event.type}</span>
         <span className="tracker-helper__event-args">{`${event.args[0]}`}</span>

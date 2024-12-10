@@ -1,25 +1,22 @@
 import { useMemo } from "react";
-import { useAtom, useSetAtom, useAtomValue } from "jotai";
+import { useSetAtom, useAtomValue } from "jotai";
 
 import type { Tracker } from "./types";
 
 import {
-  initAtom,
+  loadAdapterAtom,
   clearEventsAtom,
   appendEventAtom,
-  emitEventsEffect,
   trackerStateAtom,
 } from "./atoms";
 
 export function useTracker() {
-  useAtom(emitEventsEffect);
-
-  const init = useSetAtom(initAtom);
+  const loadAdapter = useSetAtom(loadAdapterAtom);
   const appendEvent = useSetAtom(appendEventAtom);
 
   return useMemo(
     () => ({
-      init,
+      loadAdapter,
       identify: ((...args) =>
         appendEvent({
           type: "identify",
@@ -36,7 +33,7 @@ export function useTracker() {
       reset: ((...args) =>
         appendEvent({ type: "reset", args })) as Tracker["reset"],
     }),
-    [init, appendEvent],
+    [loadAdapter, appendEvent],
   );
 }
 

@@ -18,11 +18,11 @@ It also exports a `TrackerHelper` component which renders a floating debug windo
 npm install @dangreaves/react-tracker
 ```
 
-## Loading a JavaScript SDK
+## Loading an adapter
 
-To send events, you must first load the appropriate JavaScript SDK for your Segment-compatible tracking service.
+To send events, you must first load the appropriate JavaScript SDK for your Segment-compatible tracking service using an adapter.
 
-Create a React component which imports your chosen JavaScript SDK, and when ready, pass it to the `init` method from the `useTracker` hook. Render that React component somewhere globally in your app.
+Create a React component which imports your chosen adapter, and pass it to the `loadAdapter` method from the `useTracker` hook. Render that React component somewhere globally in your app.
 
 In this example, we are using the [RudderStack JavaScript SDK](https://www.rudderstack.com/docs/sources/event-streams/sdks/rudderstack-javascript-sdk).
 
@@ -36,14 +36,12 @@ function Tracker() {
   const tracker = useTracker();
 
   useEffect(() => {
-    rudderAnalytics.load(
-      "abcdefxyjihjklmnopqrstuvwxyz",
-      "https://abc123.dataplane.rudderstack.com",
+    tracker.loadAdapter(
+      new RudderStackAdapter({
+        writeKey: "abcdefhijklmnopqrstuvwxyq",
+        dataPlaneUrl: "https://foobar.dataplane.rudderstack.com",
+      }),
     );
-
-    rudderAnalytics.ready(() => {
-      tracker.init({ tracker: rudderAnalytics });
-    });
   }, [tracker]);
 
   return null;
@@ -54,7 +52,7 @@ function Tracker() {
 
 To send an event to the tracker, use the `useTracker()` hook.
 
-You can send events to the tracker at any time, even before the SDK's have connected. The events will be buffered and sent to the SDK's when ready.
+You can send events to the tracker at any time, even before the adapters have connected. The events will be buffered and sent to the adapters when ready.
 
 ```tsx
 import { useTracker } from "@dangreaves/react-tracker";
@@ -72,7 +70,7 @@ function Component() {
 
 ## Rendering the helper
 
-The `TrackerHelper` component shows a floating window to debug events sent to the tracker. It shows the status of connected SDK's, and the status for each event. Each event can be expanded to show the full JSON payload which was sent to the SDK.
+The `TrackerHelper` component shows a floating window to debug events sent to the tracker. It shows the status of each adapter and a list of events. Each event can be expanded to show the full JSON payload which was sent to the SDK.
 
 ```tsx
 import { TrackerHelper } from "@dangreaves/react-tracker";

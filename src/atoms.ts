@@ -1,25 +1,18 @@
 import { atom } from "jotai";
-import { atomEffect } from "jotai-effect";
 import { atomWithStorage } from "jotai/utils";
 
 import { differenceInSeconds } from "date-fns";
 
-import { debug } from "./debug";
 import { generateNonSecureUniqueId } from "./utils";
 
-import type { Tracker, Event, DebugEvent, InitConfig } from "./types";
+import type { Event, DebugEvent } from "./types";
+
+import type { Adapter } from "./adapters/Adapter";
 
 /**
- * A fully initialized Segment compatible tracker.
+ * Array of adapters.
  */
-export const trackerAtom = atom<Tracker | null>(null);
-
-/**
- * Initiate tracking with the given tracker.
- */
-export const initAtom = atom(null, (_get, set, { tracker }: InitConfig) => {
-  set(trackerAtom, tracker as Tracker);
-});
+export const adaptersAtom = atom<Adapter[]>([]);
 
 /**
  * Array of events.
@@ -27,22 +20,28 @@ export const initAtom = atom(null, (_get, set, { tracker }: InitConfig) => {
 export const eventsAtom = atom<Event[]>([]);
 
 /**
- * Array of events not yet emitted.
- */
-export const pendingEventsAtom = atom((get) =>
-  get(eventsAtom).filter((event) => true !== event.isEmitted),
-);
-
-/**
- * Append an event to the events array.
+ * Append an event to the events atom and send to adapters.
  */
 export const appendEventAtom = atom(
   null,
-  (_get, set, event: Omit<Event, "id" | "receivedAt">) => {
+  (get, set, payload: Omit<Event, "id" | "receivedAt">) => {
+    // Construct an event object.
+    const event: Event = {
+      ...payload,
+      id: generateNonSecureUniqueId(),
+      receivedAt: new Date(),
+    };
+
+    // Append to the main events atom.
     set(eventsAtom, (events) => [
       ...events.slice(-49), // Only keep 50 events.
       { ...event, id: generateNonSecureUniqueId(), receivedAt: new Date() },
     ]);
+
+    // Send to each adapter.
+    for (const adapter of get(adaptersAtom)) {
+      adapter.appendEvent(event);
+    }
   },
 );
 
@@ -54,63 +53,21 @@ export const clearEventsAtom = atom(null, (_get, set) => {
 });
 
 /**
- * Order in which buffered events should be emitted to the tracker.
+ * Load a new adapter.
  */
-const EVENT_RANK_ORDER: Event["type"][] = [
-  "identify",
-  "page",
-  "track",
-  "group",
-  "alias",
-  "reset",
-];
+export const loadAdapterAtom = atom(null, (get, set, adapter: Adapter) => {
+  set(adaptersAtom, (adapters) => {
+    // Check if the adapter is already loaded.
+    if (!!adapters.find(({ handle }) => handle === adapter.handle)) {
+      return adapters;
+    }
 
-/**
- * Emit pending events to the tracker.
- */
-export const emitEventsEffect = atomEffect((get, set) => {
-  // Resolve the tracker.
-  const tracker = get(trackerAtom);
+    // Send events to the adapter buffer.
+    adapter.load(get(eventsAtom));
 
-  // Create a copy of pending events (so we can sort them).
-  const pendingEvents = [...get(pendingEventsAtom)];
-
-  // We do not have a tracker yet, do nothing.
-  if (!tracker) return;
-
-  // There are no pending events, do nothing.
-  if (0 === pendingEvents.length) return;
-
-  /**
-   * Sort pending events by rank.
-   * This ensures that identify, page and track events are sent in that order if they
-   * all appear in the buffer at the same time.
-   */
-  pendingEvents.sort(
-    (a, b) =>
-      EVENT_RANK_ORDER.indexOf(a.type) - EVENT_RANK_ORDER.indexOf(b.type),
-  );
-
-  // Loop each pending event and emit to tracker.
-  for (const event of pendingEvents) {
-    // @ts-expect-error
-    tracker[event.type](...event.args);
-    debug("Emitted event", event);
-  }
-
-  // Resolve a list of emitted event IDs.
-  const emittedEventIds = pendingEvents.map((event) => event.id);
-
-  // Set isEmitted for each of the events we just emitted.
-  set(eventsAtom, (events) =>
-    events.map((event) => {
-      if (emittedEventIds.includes(event.id)) {
-        return { ...event, isEmitted: true };
-      }
-
-      return event;
-    }),
-  );
+    // Append adapter to array.
+    return [...adapters, adapter];
+  });
 });
 
 /**
@@ -170,11 +127,14 @@ export const helperEnabledAtom = atomWithStorage(
  * Current state of the tracker for debugging.
  */
 export const trackerStateAtom = atom((get) => {
-  const tracker = get(trackerAtom);
+  const adapters = get(adaptersAtom);
   const events = get(debugEventsAtom);
 
   return {
     events,
-    isConnected: !!tracker,
+    adapters: adapters.map((adapter) => ({
+      name: adapter.name,
+      isConnected: adapter.isConnected,
+    })),
   };
 });
