@@ -29,7 +29,6 @@
   },
   "dependencies": {
     "date-fns": "^4.1.0",
-    "debug": "^4.3.7",
     "jotai": "^2.10.3",
     "react-draggable": "^4.4.6"
   },
