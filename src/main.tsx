@@ -1,7 +1,12 @@
 import { StrictMode, useEffect } from "react";
 import { createRoot } from "react-dom/client";
 
-import { useTracker, TrackerHelper, RudderStackAdapter } from "./index";
+import {
+  useTracker,
+  TrackerHelper,
+  RudderStackAdapter,
+  KlaviyoAdapter,
+} from "./index";
 
 function Tracker() {
   const tracker = useTracker();
@@ -13,6 +18,8 @@ function Tracker() {
         dataPlaneUrl: "https://bareddanxhuwkw.dataplane.rudderstack.com",
       }),
     );
+
+    tracker.loadAdapter(new KlaviyoAdapter({ companyId: "JnNaYr" }));
   }, [tracker]);
 
   return null;

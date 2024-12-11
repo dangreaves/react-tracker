@@ -39,7 +39,7 @@ export abstract class Adapter {
    */
   connect() {
     this.isConnected = true;
-    this.emitBufferedEvents();
+    this._emitBufferedEvents();
   }
 
   /**
@@ -64,7 +64,7 @@ export abstract class Adapter {
   /**
    * Sort and emit buffered events.
    */
-  private emitBufferedEvents() {
+  private _emitBufferedEvents() {
     // Do nothing if we have no buffered events.
     if (0 === this.bufferedEvents.length) return;
 
