@@ -32,7 +32,17 @@ function Component() {
     <>
       <h1>Actions</h1>
       <div style={{ display: "flex", gap: "15px" }}>
-        <button onClick={() => tracker.identify("123456")}>Identify</button>
+        <button
+          onClick={() =>
+            tracker.identify("123456", {
+              firstName: "Bobby",
+              lastName: "Tables",
+              email: "foo@example.com",
+            })
+          }
+        >
+          Identify
+        </button>
         <button onClick={() => tracker.page("Homepage")}>Page: Homepage</button>
         <button onClick={() => tracker.page("Product", "Black T-Shirt")}>
           Page: Product

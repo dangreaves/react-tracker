@@ -48,7 +48,6 @@ export class KlaviyoAdapter extends Adapter {
    */
   private _pollForScriptReady() {
     const intervalId = setInterval(() => {
-      console.log("checking if klaviyo is ready");
       if (
         "undefined" !== typeof window &&
         "undefined" !== typeof window["klaviyo"]
@@ -63,12 +62,35 @@ export class KlaviyoAdapter extends Adapter {
    * Emit the given event to Klaviyo.
    */
   async onEvent(event: Event) {
-    // Resolve Klaviyo (this should always be set at this point)
+    // Resolve Klaviyo (this should always be set at this point).
     const klaviyo = window["klaviyo"];
     if (!klaviyo) return;
 
-    // Send event to Klaviyo.
-    console.log("klaviyo event", event);
+    // Send Klaviyo identify event.
+    if ("identify" === event.type) {
+      const payload = this._klaviyoIdentifyPayload(event);
+      if (payload) klaviyo.identify(payload);
+    }
+  }
+
+  /**
+   * Resolve a Klaviyo identify payload.
+   *
+   * @see https://developers.klaviyo.com/en/v1-2/docs/identify-api-reference
+   */
+  private _klaviyoIdentifyPayload(event: Event) {
+    const traits = event.args[1] as any;
+    if (!traits || "object" !== typeof traits) return;
+
+    const payload = {
+      ...(traits["email"] ? { $email: traits["email"] } : {}),
+      ...(traits["firstName"] ? { $first_name: traits["firstName"] } : {}),
+      ...(traits["lastName"] ? { $last_name: traits["lastName"] } : {}),
+    };
+
+    if (!objectIsPopulated(payload)) return;
+
+    return payload;
   }
 }
 
@@ -76,4 +98,15 @@ declare global {
   interface Window {
     klaviyo?: any;
   }
+}
+
+/**
+ * Return true if the given object has at least one truthy value.
+ */
+function objectIsPopulated(obj: any) {
+  for (let key in obj) {
+    if (!!obj[key]) return true;
+  }
+
+  return false;
 }
