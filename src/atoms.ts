@@ -15,6 +15,12 @@ import type { Adapter } from "./adapters/Adapter";
 export const adaptersAtom = atom<Adapter[]>([]);
 
 /**
+ * Array of connected adapter handles.
+ * This is only used to force a state update when an adapter connects.
+ */
+export const connectedAdaptersAtom = atom<string[]>([]);
+
+/**
  * Array of events.
  */
 export const eventsAtom = atom<Event[]>([]);
@@ -62,8 +68,15 @@ export const loadAdapterAtom = atom(null, (get, set, adapter: Adapter) => {
       return adapters;
     }
 
-    // Send events to the adapter buffer.
-    adapter.load(get(eventsAtom));
+    // Load the adapter with buffered events.
+    adapter.load({
+      bufferedEvents: get(eventsAtom),
+      onConnected: () =>
+        set(connectedAdaptersAtom, (connectedAdapters) => [
+          ...connectedAdapters,
+          adapter.handle,
+        ]),
+    });
 
     // Append adapter to array.
     return [...adapters, adapter];
@@ -127,6 +140,9 @@ export const helperEnabledAtom = atomWithStorage(
  * Current state of the tracker for debugging.
  */
 export const trackerStateAtom = atom((get) => {
+  // Force a state update when an adapter connects.
+  get(connectedAdaptersAtom);
+
   const adapters = get(adaptersAtom);
   const events = get(debugEventsAtom);
 

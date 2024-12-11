@@ -22,6 +22,11 @@ export abstract class Adapter {
   isConnected: boolean = false;
 
   /**
+   * Callback for when this adapter is connected.
+   */
+  onConnected?: () => void;
+
+  /**
    * Array of buffered events.
    */
   bufferedEvents: Event[] = [];
@@ -39,6 +44,7 @@ export abstract class Adapter {
    */
   connect() {
     this.isConnected = true;
+    if (this.onConnected) this.onConnected();
     this._emitBufferedEvents();
   }
 
@@ -46,8 +52,15 @@ export abstract class Adapter {
    * Load the adapter with the given buffered events.
    * These events will be emitted when the adapter is connected.
    */
-  load(events: Event[]) {
-    this.bufferedEvents = events;
+  load({
+    onConnected,
+    bufferedEvents,
+  }: {
+    bufferedEvents: Event[];
+    onConnected: () => void;
+  }) {
+    this.onConnected = onConnected;
+    this.bufferedEvents = bufferedEvents;
   }
 
   /**
