@@ -35,9 +35,7 @@ export class RudderStackAdapter extends Adapter {
    * Emit the given event to RudderStack.
    */
   async onEvent(event: Event) {
-    const { id, receivedAt, ...rest } = event;
-
     // @ts-expect-error
-    rudderAnalytics[event.type](...rest);
+    rudderAnalytics[event.type](...event.args);
   }
 }
