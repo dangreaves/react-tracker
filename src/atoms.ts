@@ -41,7 +41,7 @@ export const appendEventAtom = atom(
     // Append to the main events atom.
     set(eventsAtom, (events) => [
       ...events.slice(-49), // Only keep 50 events.
-      { ...event, id: generateNonSecureUniqueId(), receivedAt: new Date() },
+      event,
     ]);
 
     // Send to each adapter.
