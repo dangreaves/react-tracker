@@ -1,6 +1,6 @@
 {
   "name": "@dangreaves/react-tracker",
-  "version": "0.6.0",
+  "version": "0.7.0",
   "description": "React hooks for sending events to RudderStack and Segment",
   "license": "MIT",
   "repository": "dangreaves/react-tracker",
