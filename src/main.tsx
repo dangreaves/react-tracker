@@ -60,7 +60,7 @@ function Component() {
         </button>
       </div>
       <Tracker />
-      <TrackerHelper />
+      <TrackerHelper enabled />
     </>
   );
 }
