@@ -22,12 +22,25 @@ export class GoogleTagManagerAdapter extends Adapter {
    * Poll the window every 1 second until the "dataLayer" API is ready.
    */
   private _pollForScriptReady() {
+    let tries = 0;
+
     const intervalId = setInterval(() => {
       if (
         "undefined" !== typeof window &&
         "undefined" !== typeof window["dataLayer"]
       ) {
         this.connect();
+        clearInterval(intervalId);
+        return;
+      }
+
+      tries++;
+
+      if (tries > 10) {
+        console.error(
+          `Could not connect Google Tag Manger after 10 seconds. Giving up.`,
+        );
+
         clearInterval(intervalId);
       }
     }, 1000);
