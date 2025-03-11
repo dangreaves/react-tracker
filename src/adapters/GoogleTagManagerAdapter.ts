@@ -1,5 +1,9 @@
 import type { Event } from "../types";
 
+import type { ProductAddedEvent } from "../types/rudderstack";
+
+import type { DataLayerPayload, DataLayerAddToCartPayload } from "../types/gtm";
+
 import { Adapter } from "./Adapter";
 
 /**
@@ -54,12 +58,44 @@ export class GoogleTagManagerAdapter extends Adapter {
     const dataLayer = window["dataLayer"];
     if (!dataLayer) return;
 
-    console.log({ event, dataLayer });
+    // Resolve a payload if possible.
+    const payload = this._resolveDataLayerPayload(event);
+
+    // Send payload to dataLayer.
+    if (payload) dataLayer.push(payload);
+  }
+
+  /**
+   * Resolve a "dataLayer" payload from the given tracker event.
+   */
+  private _resolveDataLayerPayload(event: Event): DataLayerPayload | null {
+    if ("track" === event.type) {
+      const eventType = event.args[0];
+      if ("string" !== typeof eventType) return null;
+
+      const eventPayload = event.args[1];
+      if ("object" !== typeof eventPayload) return null;
+
+      if ("Product Added" === eventType) {
+        return this._addToCartEvent(eventPayload as ProductAddedEvent);
+      }
+    }
+
+    return null;
+  }
+
+  private _addToCartEvent(event: ProductAddedEvent): DataLayerAddToCartPayload {
+    return {
+      event: "add_to_cart",
+      currency: "",
+    };
   }
 }
 
 declare global {
   interface Window {
-    dataLayer?: any;
+    dataLayer?: {
+      push: (payload: DataLayerPayload) => void;
+    };
   }
 }

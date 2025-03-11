@@ -6,24 +6,32 @@ import {
   TrackerHelper,
   RudderStackAdapter,
   KlaviyoAdapter,
+  Tracker,
 } from "./index";
 
-function Tracker() {
-  const tracker = useTracker();
+const tracker = new Tracker();
 
-  useEffect(() => {
-    tracker.loadAdapter(
-      new RudderStackAdapter({
-        writeKey: "2pTOhWPvU6QdWwcE1v9QM8vAQqQ",
-        dataPlaneUrl: "https://bareddanxhuwkw.dataplane.rudderstack.com",
-      }),
-    );
+tracker.track("ga", "add_to_cart", {
+  category1: "hello",
+  category2: "hello",
+});
 
-    tracker.loadAdapter(new KlaviyoAdapter({ companyId: "JnNaYr" }));
-  }, [tracker]);
+// function Tracker() {
+//   const tracker = useTracker();
 
-  return null;
-}
+//   useEffect(() => {
+//     tracker.loadAdapter(
+//       new RudderStackAdapter({
+//         writeKey: "2pTOhWPvU6QdWwcE1v9QM8vAQqQ",
+//         dataPlaneUrl: "https://bareddanxhuwkw.dataplane.rudderstack.com",
+//       }),
+//     );
+
+//     tracker.loadAdapter(new KlaviyoAdapter({ companyId: "JnNaYr" }));
+//   }, [tracker]);
+
+//   return null;
+// }
 
 function Component() {
   const tracker = useTracker();
@@ -58,8 +66,17 @@ function Component() {
         >
           Track: Product Clicked
         </button>
+        <button
+          onClick={() =>
+            tracker.track("Product Added", {
+              unknown: "foo",
+            })
+          }
+        >
+          Track: Product Clicked
+        </button>
       </div>
-      <Tracker />
+      {/* <Tracker /> */}
       <TrackerHelper enabled />
     </>
   );

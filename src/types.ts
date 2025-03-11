@@ -1,5 +1,7 @@
 import type { RudderAnalytics } from "@rudderstack/analytics-js";
 
+import type { TrackFunction } from "./types/rudderstack";
+
 /**
  * Tracker type used internally.
  *
@@ -7,10 +9,13 @@ import type { RudderAnalytics } from "@rudderstack/analytics-js";
  * an AnalyticsBrowser from Segment would work just fine, as it has the
  * same API for the track methods.
  */
-export type Tracker = RudderAnalytics;
+export type Tracker = Omit<RudderAnalytics, "track"> & {
+  track: TrackFunction;
+};
 
 /**
  * An event to be emitted to the tracker.
+ * @todo Rename this to emission, call or invocation? It's not really an event, it's a call to the rudderstack SDK like .track(), .page() etc. Inside track() is where you send a RudderStackEvent.
  */
 export interface Event {
   id: string;
