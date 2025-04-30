@@ -1,3 +1,11 @@
+> [!WARNING]
+>
+> **I am no longer maintaining this package.**
+>
+> - This was an attempt at providing a single interface for the various tracking platforms, with a nice debug tool
+> - It turns out, there are so many subtle differences between the trackers, that designing a single interface for them all is difficult
+> - It's easier to integrate each of your trackers directly, and use their built-in tools to verify that the events are sending correctly
+
 # react-tracker
 
 > React hook for sending events to RudderStack and Segment
